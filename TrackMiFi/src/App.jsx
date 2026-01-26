@@ -1,5 +1,6 @@
 import { TransactionProvider } from './features/transactions/transaction.context'
 import TransactionForm from './features/transactions/TransactionForm'
+import MonthlySummary from './features/summary/MonthlySummary'
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         </h1>
 
         <TransactionForm />
+        <MonthlySummary />
       </div>
     </TransactionProvider>
   )
