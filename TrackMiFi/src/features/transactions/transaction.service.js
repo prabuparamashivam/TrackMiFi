@@ -18,7 +18,7 @@ async function createTransaction(data) {
   // 1️⃣ Validation
   if (!data) throw new Error('Transaction data is required')
 
-  const { type, amount, category, date } = data
+  const { type, amount, category, date ,expectedExpenseId } = data
 
   if (!TRANSACTION_TYPES.includes(type)) {
     throw new Error('Invalid transaction type')
@@ -37,6 +37,7 @@ async function createTransaction(data) {
     type,
     amount,
     category,
+    expectedExpenseId: expectedExpenseId ?? null,
     date: date || new Date().toISOString(),
     createdAt: new Date().toISOString(),
   }

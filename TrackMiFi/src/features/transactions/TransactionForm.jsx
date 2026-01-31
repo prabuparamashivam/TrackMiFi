@@ -1,29 +1,40 @@
 import { useState } from 'react'
 import { useTransactions } from './transaction.context'
+import { useExpectedExpenses } from '../expectedExpenses/expectedExpense.context'
+
 
 export default function TransactionForm() {
   const { addTransaction, loading, error } = useTransactions()
+  const { expectedExpenses } = useExpectedExpenses()
 
   const [type, setType] = useState('expense')
   const [amount, setAmount] = useState('')
   const [category, setCategory] = useState('')
   const [date, setDate] = useState('')
+  const [expectedExpenseId, setExpectedExpenseId] = useState('')
+
+  
 
   async function handleSubmit(e) {
     e.preventDefault()
 
     try {
-      await addTransaction({
-        type,
-        amount: Number(amount),
-        category,
-        date,
-      })
+    await addTransaction({
+      type,
+      amount: Number(amount),
+      category,
+      expectedExpenseId: expectedExpenseId
+        ? Number(expectedExpenseId)
+        : null,
+      date,
+    })
+
 
       // reset form
       setAmount('')
       setCategory('')
       setDate('')
+      setExpectedExpenseId('')
     } catch (err) {
       // error already handled in context
     }
@@ -73,6 +84,30 @@ export default function TransactionForm() {
         />
       </div>
 
+      {/* Link to Expected Expense */}
+      {type === 'expense' && expectedExpenses.length > 0 && (
+        <div className="mb-3">
+          <label className="block text-sm font-medium mb-1">
+            Link to Expected Expense (optional)
+          </label>
+
+          <select
+            value={expectedExpenseId}
+            onChange={(e) => setExpectedExpenseId(e.target.value)}
+            className="w-full border rounded px-3 py-2"
+          >
+            <option value="">-- Not linked --</option>
+
+            {expectedExpenses.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name} (₹{item.expectedAmount})
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+
       {/* Date */}
       <div className="mb-4">
         <label className="block text-sm font-medium mb-1">Date</label>
@@ -96,7 +131,10 @@ export default function TransactionForm() {
         className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 disabled:opacity-50"
       >
         {loading ? 'Saving...' : 'Add Transaction'}
+       
+
       </button>
+      
     </form>
   )
 }
