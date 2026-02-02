@@ -1,5 +1,5 @@
 const DB_NAME = 'trackmifi_db'
-const DB_VERSION = 2
+const DB_VERSION = 3
 
 let dbInstance = null
 
@@ -37,8 +37,6 @@ export function openDB() {
           autoIncrement: true,
         })
 
-        store.createIndex('month', 'month', { unique: false })
-        store.createIndex('year', 'year', { unique: false })
         store.createIndex('category', 'category', { unique: false })
       }
     }

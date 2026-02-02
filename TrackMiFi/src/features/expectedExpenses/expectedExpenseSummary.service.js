@@ -1,15 +1,22 @@
-
 // src/features/expectedExpenses/expectedExpenseSummary.service.js
 
-/**
- * Calculate progress for expected expenses
- */
 export function calculateExpectedExpenseProgress(
   expectedExpenses,
-  transactions
+  transactions,
+  month,
+  year
 ) {
+  // 🔥 Monthly reset happens here
+  const monthlyTransactions = transactions.filter((tx) => {
+    const d = new Date(tx.date)
+    return (
+      d.getMonth() === month &&
+      d.getFullYear() === year
+    )
+  })
+
   return expectedExpenses.map((expense) => {
-    const relatedTransactions = transactions.filter(
+    const relatedTransactions = monthlyTransactions.filter(
       (tx) =>
         tx.type === 'expense' &&
         tx.expectedExpenseId === expense.id

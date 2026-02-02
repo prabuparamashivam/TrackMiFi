@@ -19,31 +19,20 @@ export async function addExpectedExpense(expense) {
 /**
  * Get expected expenses for a given month & year
  */
-export async function getExpectedExpensesByMonth(month, year) {
+/**
+ * Get ALL expected expenses (master list)
+ */
+export async function getAllExpectedExpenses() {
   const store = await getStore('expected_expenses', 'readonly')
 
   return new Promise((resolve, reject) => {
-    const result = []
-    const request = store.openCursor()
+    const request = store.getAll()
 
-    request.onsuccess = (event) => {
-      const cursor = event.target.result
-      if (cursor) {
-        const value = cursor.value
-
-        if (value.month === month && value.year === year) {
-          result.push(value)
-        }
-
-        cursor.continue()
-      } else {
-        resolve(result)
-      }
-    }
-
+    request.onsuccess = () => resolve(request.result)
     request.onerror = () => reject(request.error)
   })
 }
+
 
 /**
  * Update expected expense

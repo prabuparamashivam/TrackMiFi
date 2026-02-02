@@ -17,30 +17,30 @@ export function ExpectedExpenseProvider({ children }) {
 
   // Load data whenever month/year changes
   useEffect(() => {
-    loadExpectedExpenses(month, year)
-  }, [month, year])
+    loadExpectedExpenses()
+  }, [])
 
-  async function loadExpectedExpenses(m, y) {
-    setLoading(true)
-    setError(null)
-    try {
-      const data = await ExpectedExpenseService.fetchExpectedExpenses(m, y)
-      setExpectedExpenses(data)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
+
+async function loadExpectedExpenses() {
+  setLoading(true)
+  setError(null)
+
+  try {
+    const data = await ExpectedExpenseService.fetchExpectedExpenses()
+    setExpectedExpenses(data)
+  } catch (err) {
+    setError(err.message)
+  } finally {
+    setLoading(false)
   }
+}
+
 
   async function addExpectedExpense(data) {
     setLoading(true)
     try {
-      await ExpectedExpenseService.createExpectedExpense({
-        ...data,
-        month,
-        year,
-      })
+     await ExpectedExpenseService.createExpectedExpense(data)
+
       await loadExpectedExpenses(month, year)
     } catch (err) {
       setError(err.message)

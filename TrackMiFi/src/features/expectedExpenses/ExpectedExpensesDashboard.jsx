@@ -7,12 +7,17 @@ export default function ExpectedExpensesDashboard() {
   const { expectedExpenses } = useExpectedExpenses()
   const { transactions } = useTransactions()
 
-  const progressData = useMemo(() => {
-    return calculateExpectedExpenseProgress(
-      expectedExpenses,
-      transactions
-    )
-  }, [expectedExpenses, transactions])
+const now = new Date()
+
+const progressData = useMemo(() => {
+  return calculateExpectedExpenseProgress(
+    expectedExpenses,
+    transactions,
+    now.getMonth(),
+    now.getFullYear()
+  )
+}, [expectedExpenses, transactions])
+
 
   const totals = useMemo(() => {
     return progressData.reduce(
