@@ -5,7 +5,7 @@ import TransactionForm from './features/transactions/TransactionForm'
 import MonthlySummary from './features/summary/MonthlySummary'
 import ExpectedExpensesPage from './features/expectedExpenses/ExpectedExpensesPage'
 import ExpectedExpensesDashboard from './features/expectedExpenses/ExpectedExpensesDashboard'
-
+import CashPosition from './features/summary/cashPosition'
 
 function App() {
   return (
@@ -20,6 +20,7 @@ function App() {
           <MonthlySummary />
           <ExpectedExpensesPage/>
           <ExpectedExpensesDashboard />
+          <CashPosition />
 
           {/* Expected Expenses UI will come here next */}
         </div>
