@@ -30,22 +30,7 @@ export function calculateMonthlyCashPosition(transactions, expectedExpense, mont
    
   currentBalance = totalIncome - totalExpense
 
-for (const expense of expectedExpense) {
-  let currexpense = 0
-  let expectedAmount = expense.expectedAmount
-
-  for (const tx of monthlyTransactions) {
-    if (tx.expectedExpenseId === expense.id && tx.type === 'expense') {
-      currexpense += tx.amount
-    }
-  }
-
-  if (currexpense < expectedAmount) {
-    remainingExpectedBalance += (expectedAmount - currexpense)
-  }
-}
-
-  
+ 
   for (const expense of expectedExpense) {
     let currexpense = 0
     let expectedAmount = expense.expectedAmount
