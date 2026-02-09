@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { ExpectedExpenseService } from './expectedExpense.service'
+import { useTransactions } from '../transactions/transaction.context'
 
 const ExpectedExpenseContext = createContext(null)
 
@@ -15,6 +16,8 @@ export function ExpectedExpenseProvider({ children }) {
   const now = new Date()
   const [month, setMonth] = useState(now.getMonth())
   const [year, setYear] = useState(now.getFullYear())
+  const { transactions } = useTransactions()
+
 
   // Load data whenever month/year changes
   useEffect(() => {
@@ -22,25 +25,25 @@ export function ExpectedExpenseProvider({ children }) {
   }, [])
 
 
-async function loadExpectedExpenses() {
-  setLoading(true)
-  setError(null)
+  async function loadExpectedExpenses() {
+    setLoading(true)
+    setError(null)
 
-  try {
-    const data = await ExpectedExpenseService.fetchExpectedExpenses()
-    setExpectedExpenses(data)
-  } catch (err) {
-    setError(err.message)
-  } finally {
-    setLoading(false)
+    try {
+      const data = await ExpectedExpenseService.fetchExpectedExpenses()
+      setExpectedExpenses(data)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
-}
 
 
   async function addExpectedExpense(data) {
     setLoading(true)
     try {
-     await ExpectedExpenseService.createExpectedExpense(data)
+      await ExpectedExpenseService.createExpectedExpense(data)
 
       await loadExpectedExpenses(month, year)
     } catch (err) {
@@ -63,13 +66,46 @@ async function loadExpectedExpenses() {
     }
   }
 
-    function startEdit(expense) {
-   setEditingExpense(expense)
+  function startEdit(expense) {
+    setError(null)
+    setEditingExpense(expense)
   }
 
-   function clearEdit() {
-   setEditingExpense(null)
+  function clearEdit() {
+    setEditingExpense(null)
   }
+
+  async function deleteExpectedExpense(expenseId) {
+  setLoading(true)
+  setError(null)
+
+  try {
+    const linked = transactions.some(
+      (tx) =>
+        tx.type === 'expense' &&
+        tx.expectedExpenseId === expenseId
+    )
+
+    if (linked) {
+      throw new Error(
+        'Cannot delete expected expense with existing transactions'
+      )
+    }
+
+    await ExpectedExpenseService.removeExpectedExpense(expenseId)
+
+    if (editingExpense?.id === expenseId) {
+      clearEdit()
+    }
+
+    await loadExpectedExpenses()
+  } catch (err) {
+    setError(err.message)
+  } finally {
+    setLoading(false)
+    setError(null)
+  }
+}
 
   const value = {
     expectedExpenses,
@@ -86,6 +122,7 @@ async function loadExpectedExpenses() {
     updateExpectedExpense,
     startEdit,
     clearEdit,
+    deleteExpectedExpense,
     reload: () => loadExpectedExpenses(month, year),
   }
 

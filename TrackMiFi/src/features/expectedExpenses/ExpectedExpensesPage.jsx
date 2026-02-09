@@ -12,15 +12,25 @@ export default function ExpectedExpensesPage() {
     year,
     editingExpense,
     updateExpectedExpense,
+    startEdit,
     clearEdit,
+    deleteExpectedExpense,
   } = useExpectedExpenses()
 
   const [name, setName] = useState('')
   const [category, setCategory] = useState('')
   const [expectedAmount, setExpectedAmount] = useState('')
   const [description, setDescription] = useState('')
-  const { startEdit } = useExpectedExpenses()
 
+
+  const handleDelete = ( itemId ) => {
+    if (window.confirm("Are you sure you want to delete this item? This action cannot be undone.")) {
+      console.log(`Deleting item with ID: ${itemId}`)
+      deleteExpectedExpense(itemId)
+    } else {
+      console.log("Deletion cancelled.")
+    }
+  }
 
   useEffect(() => {
     if (editingExpense) {
@@ -170,6 +180,7 @@ export default function ExpectedExpensesPage() {
                 <th className="text-left p-2">Name</th>
                 <th className="text-left p-2">Category</th>
                 <th className="text-right p-2">Expected</th>
+                <th className="text-center p-2">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -189,6 +200,14 @@ export default function ExpectedExpensesPage() {
                   <td className="p-2">{item.category}</td>
                   <td className="p-2 text-right">
                     ₹ {item.expectedAmount}
+                  </td>
+                   <td className="p-2">
+                    <button     disabled={loading || editingExpense?.id === item.id}
+                      onClick={() => handleDelete(item.id) }
+                      className="text-red-600 underline"
+                    >
+                     Delete
+                    </button>
                   </td>
                 </tr>
               ))}
