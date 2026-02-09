@@ -81,13 +81,8 @@ export default function ExpectedExpensesDashboard() {
             <tbody>
               {progressData.map((item) => (
                 <tr key={item.id} className="border-t">
-                  <td className="p-2">
-                    <button
-                      onClick={() => startEdit(item)}
-                      className="text-blue-600 underline"
-                    >
-                      {item.name}
-                    </button>
+                  <td className="p-2 text-right">
+                     {item.name}
                   </td>
                   <td className="p-2 text-right">
                     ₹ {item.expectedAmount}

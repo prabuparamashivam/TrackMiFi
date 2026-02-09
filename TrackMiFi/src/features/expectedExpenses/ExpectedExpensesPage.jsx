@@ -19,6 +19,7 @@ export default function ExpectedExpensesPage() {
   const [category, setCategory] = useState('')
   const [expectedAmount, setExpectedAmount] = useState('')
   const [description, setDescription] = useState('')
+  const { startEdit } = useExpectedExpenses()
 
 
   useEffect(() => {
@@ -174,7 +175,17 @@ export default function ExpectedExpensesPage() {
             <tbody>
               {expectedExpenses.map((item) => (
                 <tr key={item.id} className="border-t">
-                  <td className="p-2">{item.name}</td>
+
+                <td className="p-2">
+                    <button
+                      onClick={() => startEdit(item)}
+                      className="text-blue-600 underline"
+                    >
+                      {item.name}
+                    </button>
+                  </td>
+
+                  
                   <td className="p-2">{item.category}</td>
                   <td className="p-2 text-right">
                     ₹ {item.expectedAmount}
