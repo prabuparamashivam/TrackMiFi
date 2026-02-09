@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+
 import { useExpectedExpenses } from './expectedExpense.context'
 
 export default function ExpectedExpensesPage() {
@@ -9,6 +10,9 @@ export default function ExpectedExpensesPage() {
     error,
     month,
     year,
+    editingExpense,
+    updateExpectedExpense,
+    clearEdit,
   } = useExpectedExpenses()
 
   const [name, setName] = useState('')
@@ -16,15 +20,45 @@ export default function ExpectedExpensesPage() {
   const [expectedAmount, setExpectedAmount] = useState('')
   const [description, setDescription] = useState('')
 
+
+  useEffect(() => {
+    if (editingExpense) {
+      setName(editingExpense.name)
+      setCategory(editingExpense.category)
+      setExpectedAmount(editingExpense.expectedAmount)
+      setDescription(editingExpense.description)
+    } else {
+      setName('')
+      setCategory('')
+      setExpectedAmount('')
+      setDescription('')
+    }
+  }, [editingExpense]);
+
+
   async function handleSubmit(e) {
     e.preventDefault()
 
-    await addExpectedExpense({
-      name,
-      category,
-      expectedAmount: Number(expectedAmount),
-      description,
-    })
+    if (editingExpense) {
+      await updateExpectedExpense({
+        id: editingExpense.id,
+        name: name,
+        category: category,
+        description: description,
+        expectedAmount: Number(expectedAmount),
+      })
+
+      clearEdit()
+
+    }
+    else {
+      await addExpectedExpense({
+        name,
+        category,
+        expectedAmount: Number(expectedAmount),
+        description,
+      })
+    }
 
     // reset form
     setName('')
@@ -95,13 +129,27 @@ export default function ExpectedExpensesPage() {
           </p>
         )}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="mt-4 bg-black text-white px-4 py-2 rounded disabled:opacity-50"
-        >
-          {loading ? 'Saving...' : 'Add Expected Expense'}
-        </button>
+        <div className="mt-4 flex gap-3">
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-black text-white px-4 py-2 rounded disabled:opacity-50"
+          >
+            {editingExpense ? 'Update Expected Expense' : 'Add Expected Expense'}
+          </button>
+
+          {editingExpense && (
+            <button
+              type="button"
+              onClick={clearEdit}
+              className="bg-gray-300 text-black px-4 py-2 rounded"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+
+
       </form>
 
       {/* Expected Expense List */}

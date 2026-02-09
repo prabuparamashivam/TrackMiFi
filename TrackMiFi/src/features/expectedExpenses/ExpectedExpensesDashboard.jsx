@@ -6,17 +6,19 @@ import { calculateExpectedExpenseProgress } from './expectedExpenseSummary.servi
 export default function ExpectedExpensesDashboard() {
   const { expectedExpenses } = useExpectedExpenses()
   const { transactions } = useTransactions()
+  const { startEdit } = useExpectedExpenses()
 
-const now = new Date()
 
-const progressData = useMemo(() => {
-  return calculateExpectedExpenseProgress(
-    expectedExpenses,
-    transactions,
-    now.getMonth(),
-    now.getFullYear()
-  )
-}, [expectedExpenses, transactions])
+  const now = new Date()
+
+  const progressData = useMemo(() => {
+    return calculateExpectedExpenseProgress(
+      expectedExpenses,
+      transactions,
+      now.getMonth(),
+      now.getFullYear()
+    )
+  }, [expectedExpenses, transactions])
 
 
   const totals = useMemo(() => {
@@ -79,7 +81,14 @@ const progressData = useMemo(() => {
             <tbody>
               {progressData.map((item) => (
                 <tr key={item.id} className="border-t">
-                  <td className="p-2">{item.name}</td>
+                  <td className="p-2">
+                    <button
+                      onClick={() => startEdit(item)}
+                      className="text-blue-600 underline"
+                    >
+                      {item.name}
+                    </button>
+                  </td>
                   <td className="p-2 text-right">
                     ₹ {item.expectedAmount}
                   </td>
@@ -87,11 +96,10 @@ const progressData = useMemo(() => {
                     ₹ {item.spent}
                   </td>
                   <td
-                    className={`p-2 text-right ${
-                      item.balance < 0
+                    className={`p-2 text-right ${item.balance < 0
                         ? 'text-red-600'
                         : 'text-green-700'
-                    }`}
+                      }`}
                   >
                     ₹ {item.balance}
                   </td>

@@ -10,6 +10,7 @@ export function ExpectedExpenseProvider({ children }) {
   const [expectedExpenses, setExpectedExpenses] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [editingExpense, setEditingExpense] = useState(null)
 
   const now = new Date()
   const [month, setMonth] = useState(now.getMonth())
@@ -62,20 +63,17 @@ async function loadExpectedExpenses() {
     }
   }
 
-  async function deleteExpectedExpense(id) {
-    setLoading(true)
-    try {
-      await ExpectedExpenseService.removeExpectedExpense(id)
-      await loadExpectedExpenses(month, year)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
+    function startEdit(expense) {
+   setEditingExpense(expense)
+  }
+
+   function clearEdit() {
+   setEditingExpense(null)
   }
 
   const value = {
     expectedExpenses,
+    editingExpense,
     loading,
     error,
 
@@ -86,7 +84,8 @@ async function loadExpectedExpenses() {
 
     addExpectedExpense,
     updateExpectedExpense,
-    deleteExpectedExpense,
+    startEdit,
+    clearEdit,
     reload: () => loadExpectedExpenses(month, year),
   }
 
@@ -109,3 +108,4 @@ export function useExpectedExpenses() {
   }
   return context
 }
+
